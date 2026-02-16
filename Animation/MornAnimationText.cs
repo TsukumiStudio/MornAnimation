@@ -4,11 +4,16 @@ using UnityEngine;
 
 namespace MornLib
 {
-	internal sealed class MornAnimationText : MornAnimationTargetBase
+	public sealed class MornAnimationText : MornAnimationTargetBase
 	{
 		[SerializeField] private MornAnimationTextModule _textModule = new();
 		private CancellationTokenSource _cts;
 		private List<MornAnimationModuleBase> _modules;
+
+		public void SetText(string text)
+		{
+			_textModule.SetText(text);
+		}
 
 		protected override List<MornAnimationModuleBase> GetModules()
 		{

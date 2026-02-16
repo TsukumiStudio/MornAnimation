@@ -4,7 +4,7 @@ using Cysharp.Threading.Tasks;
 
 namespace MornLib
 {
-	internal abstract class MornAnimationTargetBase : MornAnimationBase
+	public abstract class MornAnimationTargetBase : MornAnimationBase
 	{
 		private CancellationTokenSource _cts;
 		protected abstract List<MornAnimationModuleBase> GetModules();

@@ -6,7 +6,7 @@ using UnityEngine;
 namespace MornLib
 {
 	[Serializable]
-	internal abstract class MornAnimationModuleBase
+	public abstract class MornAnimationModuleBase
 	{
 		[SerializeField] private MornAnimationTimeSettings _overrideTimeSettings;
 		protected MornAnimationTimeSettings Time => _overrideTimeSettings != null ? _overrideTimeSettings : MornAnimationGlobal.I.TimeSettings;

@@ -129,5 +129,10 @@ namespace MornLib
 
 			await UniTask.CompletedTask;
 		}
+
+		public void SetText(string text)
+		{
+			_text = text;
+		}
 	}
 }
