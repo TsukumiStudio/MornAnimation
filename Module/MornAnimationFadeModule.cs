@@ -72,6 +72,24 @@ namespace MornLib
 			}
 		}
 
+		public override void OnInitialize()
+		{
+			if (_targetImage != null)
+			{
+				_targetImage.SetAlpha(0f);
+			}
+
+			if (_targetCanvas != null)
+			{
+				_targetCanvas.alpha = 0f;
+				if (_withRaycast)
+				{
+					_targetCanvas.interactable = false;
+					_targetCanvas.blocksRaycasts = false;
+				}
+			}
+		}
+
 		public override void OnShowImmediate()
 		{
 			if (_targetImage != null)
@@ -134,7 +152,7 @@ namespace MornLib
 			var elapsed = 0f;
 			if (delay > 0f)
 			{
-				await UniTask.Delay(TimeSpan.FromSeconds(delay), cancellationToken: token);
+				await MornAnimationUtil.WaitSeconds(delay, token);
 			}
 
 			var easeType = toShow ? Time.ShowEaseType : Time.HideEaseType;
@@ -144,7 +162,7 @@ namespace MornLib
 			while (elapsed < duration)
 			{
 				ct.ThrowIfCancellationRequested();
-				elapsed += UnityEngine.Time.deltaTime;
+				elapsed += MornAnimationUtil.GetDeltaTime();
 				var t = Mathf.Clamp01(elapsed / duration);
 				var easedT = t.Ease(easeType);
 				if (_targetImage != null)
@@ -157,7 +175,7 @@ namespace MornLib
 					_targetCanvas.alpha = Mathf.LerpUnclamped(startCanvasAlpha, endAlpha, easedT);
 				}
 
-				await UniTask.Yield(token);
+				await MornAnimationUtil.WaitNextFrame(token);
 			}
 
 			if (_targetImage != null)

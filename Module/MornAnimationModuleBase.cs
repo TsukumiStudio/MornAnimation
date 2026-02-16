@@ -12,6 +12,7 @@ namespace MornLib
 		protected MornAnimationTimeSettings Time => _overrideTimeSettings != null ? _overrideTimeSettings : MornAnimationGlobal.I.TimeSettings;
 		public abstract void OnAwake(MornAnimationBase parent);
 		public abstract void OnValidate(MornAnimationBase parent);
+		public abstract void OnInitialize();
 		public abstract void OnShowImmediate();
 		public abstract void OnHideImmediate();
 		public abstract UniTask ShowAsync(CancellationToken ct = default);

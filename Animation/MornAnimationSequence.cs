@@ -36,7 +36,7 @@ namespace MornLib
 			var delay = toShow ? _showDelay : _hideDelay;
 			if (delay > 0f)
 			{
-				await UniTask.Delay(TimeSpan.FromSeconds(delay), cancellationToken: ct);
+				await MornAnimationUtil.WaitSeconds(delay, ct);
 			}
 
 			var taskList = new List<UniTask>();
@@ -54,7 +54,7 @@ namespace MornLib
 
 					if (_showInterval > 0f)
 					{
-						await UniTask.Delay(TimeSpan.FromSeconds(_showInterval), cancellationToken: ct);
+						await MornAnimationUtil.WaitSeconds(_showInterval, ct);
 					}
 				}
 				else
@@ -69,7 +69,7 @@ namespace MornLib
 
 					if (_hideInterval > 0f)
 					{
-						await UniTask.Delay(TimeSpan.FromSeconds(_hideInterval), cancellationToken: ct);
+						await MornAnimationUtil.WaitSeconds(_hideInterval, ct);
 					}
 				}
 			}
@@ -78,25 +78,36 @@ namespace MornLib
 		}
 
 		[Button]
-		public override void DebugShow()
+		public override void DebugInitialize()
 		{
-			_cts?.Cancel();
-			_cts = null;
 			foreach (var target in _targets)
 			{
-				target.DebugShow();
+				target.DebugInitialize();
 			}
 		}
 
 		[Button]
-		public override void DebugHide()
+		public async UniTask DebugShow()
 		{
-			_cts?.Cancel();
-			_cts = null;
+			await ShowAsync();
+			MarkAllDirty();
+		}
+
+		[Button]
+		public async UniTask DebugHide()
+		{
+			await HideAsync();
+			MarkAllDirty();
+		}
+
+		private void MarkAllDirty()
+		{
 			foreach (var target in _targets)
 			{
-				target.DebugHide();
+				MornAnimationUtil.SetDirty(target);
 			}
+
+			MornAnimationUtil.SetDirty(this);
 		}
 	}
 }

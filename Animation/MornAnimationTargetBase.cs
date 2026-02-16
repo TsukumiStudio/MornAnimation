@@ -54,25 +54,28 @@ namespace MornLib
 		}
 
 		[Button]
-		public override void DebugShow()
+		public override void DebugInitialize()
 		{
-			_cts?.Cancel();
-			_cts = null;
 			foreach (var module in GetModules())
 			{
-				module.OnShowImmediate();
+				module.OnInitialize();
 			}
+
+			MornAnimationUtil.SetDirty(this);
 		}
 
 		[Button]
-		public override void DebugHide()
+		public async UniTask DebugShow()
 		{
-			_cts?.Cancel();
-			_cts = null;
-			foreach (var module in GetModules())
-			{
-				module.OnHideImmediate();
-			}
+			await ShowAsync();
+			MornAnimationUtil.SetDirty(this);
+		}
+
+		[Button]
+		public async UniTask DebugHide()
+		{
+			await HideAsync();
+			MornAnimationUtil.SetDirty(this);
 		}
 	}
 }

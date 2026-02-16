@@ -47,6 +47,15 @@ namespace MornLib
 			}
 		}
 
+		public override void OnInitialize()
+		{
+			if (_targetText != null)
+			{
+				_targetText.text = _text;
+				_targetText.maxVisibleCharacters = 0;
+			}
+		}
+
 		public override void OnShowImmediate()
 		{
 			if (_targetText != null)
@@ -75,7 +84,7 @@ namespace MornLib
 			var delay = Time != null ? Time.ShowDelay : 0f;
 			if (delay > 0f)
 			{
-				await UniTask.Delay(TimeSpan.FromSeconds(delay), cancellationToken: token);
+				await MornAnimationUtil.WaitSeconds(delay, token);
 			}
 
 			_targetText.text = _text;
@@ -105,7 +114,7 @@ namespace MornLib
 				if (secondsPerChar > 0f)
 				{
 					var waitTime = isSilent ? secondsPerChar * silentWaitMultiplier : secondsPerChar;
-					await UniTask.Delay(TimeSpan.FromSeconds(waitTime), cancellationToken: token);
+					await MornAnimationUtil.WaitSeconds(waitTime, token);
 				}
 			}
 		}

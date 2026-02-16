@@ -39,6 +39,11 @@ namespace MornLib
 			if (IsAuto) AutoBind(parent);
 		}
 
+		public override void OnInitialize()
+		{
+			Set(_hasSpawnValue ? _spawnValue : _hideValue);
+		}
+
 		public override void OnShowImmediate()
 		{
 			Set(_showValue);
@@ -74,18 +79,19 @@ namespace MornLib
 			var elapsed = 0f;
 			if (delay > 0f)
 			{
-				await UniTask.Delay(TimeSpan.FromSeconds(delay), cancellationToken: token);
+				await MornAnimationUtil.WaitSeconds(delay, token);
 			}
 
 			var easeType = toShow ? Time.ShowEaseType : Time.HideEaseType;
 			while (elapsed < duration)
 			{
-				ct.ThrowIfCancellationRequested();
-				elapsed += UnityEngine.Time.deltaTime;
+				token.ThrowIfCancellationRequested();
+				var deltaTime = MornAnimationUtil.GetDeltaTime();
+				elapsed += deltaTime;
 				var t = Mathf.Clamp01(elapsed / duration);
 				var easedT = t.Ease(easeType);
 				Set(Lerp(startPos, endPos, easedT));
-				await UniTask.Yield(token);
+				await MornAnimationUtil.WaitNextFrame(token);
 			}
 
 			Set(endPos);
