@@ -6,7 +6,8 @@ namespace MornLib
 	[Serializable]
 	internal sealed class MornAnimationMoveUGUIModule : MornAnimationTransformModuleBase
 	{
-		[SerializeField, EnableIf(nameof(IsCustom))] private RectTransform _target;
+		[SerializeField, EnableIf(nameof(IsCustom))]
+		private RectTransform _target;
 
 		protected override void AutoBind(MornAnimationBase parent)
 		{

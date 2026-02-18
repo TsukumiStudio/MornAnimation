@@ -10,6 +10,11 @@ namespace MornLib
 		private CancellationTokenSource _cts;
 		private List<MornAnimationModuleBase> _modules;
 
+		protected override void ResetCachedModules()
+		{
+			_modules = null;
+		}
+
 		protected override List<MornAnimationModuleBase> GetModules()
 		{
 			if (_modules != null) return _modules;

@@ -15,6 +15,11 @@ namespace MornLib
 			_textModule.SetText(text);
 		}
 
+		protected override void ResetCachedModules()
+		{
+			_modules = null;
+		}
+
 		protected override List<MornAnimationModuleBase> GetModules()
 		{
 			if (_modules != null) return _modules;

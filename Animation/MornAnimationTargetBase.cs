@@ -7,6 +7,7 @@ namespace MornLib
 	public abstract class MornAnimationTargetBase : MornAnimationBase
 	{
 		private CancellationTokenSource _cts;
+		protected abstract void ResetCachedModules();
 		protected abstract List<MornAnimationModuleBase> GetModules();
 
 		private void Awake()
@@ -19,6 +20,7 @@ namespace MornLib
 
 		private void OnValidate()
 		{
+			ResetCachedModules();
 			foreach (var module in GetModules())
 			{
 				module.OnValidate(this);
@@ -56,6 +58,7 @@ namespace MornLib
 		[Button]
 		public override void DebugInitialize()
 		{
+			ResetCachedModules();
 			foreach (var module in GetModules())
 			{
 				module.OnInitialize();
