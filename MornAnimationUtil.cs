@@ -53,7 +53,7 @@ namespace MornLib
 				return _editorDeltaTime;
 			}
 #endif
-			return Time.deltaTime;
+			return Time.unscaledDeltaTime;
 		}
 
 		/// <summary>
@@ -105,7 +105,7 @@ namespace MornLib
 				return;
 			}
 #endif
-			await UniTask.Delay(TimeSpan.FromSeconds(seconds), cancellationToken: ct);
+			await UniTask.Delay(TimeSpan.FromSeconds(seconds), ignoreTimeScale: true, cancellationToken: ct);
 		}
 
 		/// <summary>
