@@ -20,18 +20,21 @@ namespace MornLib
 		}
 
 		[SerializeField] private ReferenceType _referenceType;
-		[SerializeField] protected bool _hasSpawnValue;
-		[SerializeField, EnableIf(nameof(_hasSpawnValue))] private Vector3 _spawnValue;
+		[SerializeField] protected bool _hasSpawnOffset;
+		[SerializeField, EnableIf(nameof(_hasSpawnOffset))] private Vector3 _spawnOffset;
 		[SerializeField] private Vector3 _showValue;
-		[SerializeField] private Vector3 _hideValue;
+		[SerializeField] private Vector3 _hideOffset;
 		private CancellationTokenSource _cts;
 		protected bool IsCustom => _referenceType == ReferenceType.Custom;
 		private bool IsAuto => _referenceType == ReferenceType.Auto;
 
+		private Vector3 SpawnPosition => _showValue + _spawnOffset;
+		private Vector3 HidePosition => _showValue + _hideOffset;
+
 		public override void OnAwake(MornAnimationBase parent)
 		{
 			if (IsAuto) AutoBind(parent);
-			Set(_hasSpawnValue ? _spawnValue : _hideValue);
+			Set(_hasSpawnOffset ? SpawnPosition : HidePosition);
 		}
 
 		public override void OnValidate(MornAnimationBase parent)
@@ -41,7 +44,7 @@ namespace MornLib
 
 		public override void OnInitialize()
 		{
-			Set(_hasSpawnValue ? _spawnValue : _hideValue);
+			Set(_hasSpawnOffset ? SpawnPosition : HidePosition);
 		}
 
 		public override void OnShowImmediate()
@@ -51,14 +54,14 @@ namespace MornLib
 
 		public override void OnHideImmediate()
 		{
-			Set(_hideValue);
+			Set(HidePosition);
 		}
 
 		public override async UniTask ShowAsync(CancellationToken ct = default)
 		{
-			if (_hasSpawnValue)
+			if (_hasSpawnOffset)
 			{
-				Set(_spawnValue);
+				Set(SpawnPosition);
 			}
 
 			await MoveAsync(true, Get(), _showValue, ct);
@@ -66,7 +69,7 @@ namespace MornLib
 
 		public override async UniTask HideAsync(CancellationToken ct = default)
 		{
-			await MoveAsync(false, Get(), _hideValue, ct);
+			await MoveAsync(false, Get(), HidePosition, ct);
 		}
 
 		private async UniTask MoveAsync(bool toShow, Vector3 startPos, Vector3 endPos, CancellationToken ct = default)
