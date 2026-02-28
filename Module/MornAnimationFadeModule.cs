@@ -1,6 +1,7 @@
 using System;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -14,6 +15,7 @@ namespace MornLib
 			Custom,
 			AutoImage,
 			AutoCanvas,
+			AutoText,
 		}
 
 		[SerializeField] private ReferenceType _referenceType;
@@ -21,6 +23,8 @@ namespace MornLib
 		private Image _targetImage;
 		[SerializeField, HideIf(nameof(IsAutoImage)), EnableIf(nameof(IsCustom))]
 		private CanvasGroup _targetCanvas;
+		[SerializeField, HideIf(nameof(IsAutoImage)), EnableIf(nameof(IsCustom))]
+		private TMP_Text _targetText;
 		[SerializeField] private bool _withRaycast;
 		private bool IsCustom => _referenceType == ReferenceType.Custom;
 		private bool IsAutoImage => _referenceType == ReferenceType.AutoImage;
@@ -34,10 +38,17 @@ namespace MornLib
 				case ReferenceType.AutoImage:
 					_targetImage = parent.GetComponent<Image>();
 					_targetCanvas = null;
+					_targetText = null;
 					break;
 				case ReferenceType.AutoCanvas:
 					_targetImage = null;
 					_targetCanvas = parent.GetComponent<CanvasGroup>();
+					_targetText = null;
+					break;
+				case ReferenceType.AutoText:
+					_targetImage = null;
+					_targetCanvas = null;
+					_targetText = parent.GetComponent<TMP_Text>();
 					break;
 			}
 
@@ -55,6 +66,11 @@ namespace MornLib
 					_targetCanvas.blocksRaycasts = false;
 				}
 			}
+
+			if (_targetText != null)
+			{
+				_targetText.alpha = 0f;
+			}
 		}
 
 		public override void OnValidate(MornAnimationBase parent)
@@ -64,10 +80,17 @@ namespace MornLib
 				case ReferenceType.AutoImage:
 					_targetImage = parent.GetComponent<Image>();
 					_targetCanvas = null;
+					_targetText = null;
 					break;
 				case ReferenceType.AutoCanvas:
 					_targetImage = null;
 					_targetCanvas = parent.GetComponent<CanvasGroup>();
+					_targetText = null;
+					break;
+				case ReferenceType.AutoText:
+					_targetImage = null;
+					_targetCanvas = null;
+					_targetText = parent.GetComponent<TMP_Text>();
 					break;
 			}
 		}
@@ -88,6 +111,11 @@ namespace MornLib
 					_targetCanvas.blocksRaycasts = false;
 				}
 			}
+
+			if (_targetText != null)
+			{
+				_targetText.alpha = 0f;
+			}
 		}
 
 		public override void OnShowImmediate()
@@ -106,6 +134,11 @@ namespace MornLib
 					_targetCanvas.blocksRaycasts = true;
 				}
 			}
+
+			if (_targetText != null)
+			{
+				_targetText.alpha = 1f;
+			}
 		}
 
 		public override void OnHideImmediate()
@@ -123,6 +156,11 @@ namespace MornLib
 					_targetCanvas.interactable = false;
 					_targetCanvas.blocksRaycasts = false;
 				}
+			}
+
+			if (_targetText != null)
+			{
+				_targetText.alpha = 0f;
 			}
 		}
 
@@ -158,6 +196,7 @@ namespace MornLib
 			var easeType = toShow ? Time.ShowEaseType : Time.HideEaseType;
 			var startImageAlpha = _targetImage != null ? _targetImage.GetAlpha() : 0f;
 			var startCanvasAlpha = _targetCanvas != null ? _targetCanvas.alpha : 0f;
+			var startTextAlpha = _targetText != null ? _targetText.alpha : 0f;
 			var endAlpha = toShow ? 1f : 0f;
 			while (elapsed < duration)
 			{
@@ -175,6 +214,11 @@ namespace MornLib
 					_targetCanvas.alpha = Mathf.LerpUnclamped(startCanvasAlpha, endAlpha, easedT);
 				}
 
+				if (_targetText != null)
+				{
+					_targetText.alpha = Mathf.LerpUnclamped(startTextAlpha, endAlpha, easedT);
+				}
+
 				await MornAnimationUtil.WaitNextFrame(token);
 			}
 
@@ -186,6 +230,11 @@ namespace MornLib
 			if (_targetCanvas != null)
 			{
 				_targetCanvas.alpha = endAlpha;
+			}
+
+			if (_targetText != null)
+			{
+				_targetText.alpha = endAlpha;
 			}
 		}
 	}
