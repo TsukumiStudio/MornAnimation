@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace MornLib
 {
@@ -11,9 +12,17 @@ namespace MornLib
     /// </summary>
     public sealed class MornAnimationCommon : MornAnimationBase
     {
+        private enum FadeTarget
+        {
+            CanvasGroup,
+            Image,
+        }
+
         [SerializeField] private MornAnimationSettings _settings;
-        [SerializeField] private CanvasGroup _canvasGroup;
         [SerializeField] private RectTransform _rectTransform;
+        [SerializeField] private FadeTarget _fadeTarget;
+        [SerializeField, ShowIf(nameof(IsCanvasGroup))] private CanvasGroup _canvasGroup;
+        [SerializeField, ShowIf(nameof(IsImage))] private Image _image;
 
         [Header("Show State")]
         [SerializeField] private float _showAlpha = 1f;
@@ -22,6 +31,23 @@ namespace MornLib
         [SerializeField] private Vector3 _showRotation;
 
         private CancellationTokenSource _cts;
+
+        private bool IsCanvasGroup => _fadeTarget == FadeTarget.CanvasGroup;
+        private bool IsImage => _fadeTarget == FadeTarget.Image;
+
+        /// <summary>現在の座標・Scale・Rotation・Alphaを ShowState に取り込む。</summary>
+        [Button("現在の状態をShowStateに設定")]
+        public void CaptureCurrentAsShowState()
+        {
+            if (_rectTransform != null)
+            {
+                _showPosition = _rectTransform.anchoredPosition;
+                _showScale = _rectTransform.localScale;
+                _showRotation = _rectTransform.localEulerAngles;
+            }
+            _showAlpha = GetCurrentAlpha();
+            MornAnimationUtil.SetDirty(this);
+        }
 
         public override UniTask ShowAsync(CancellationToken ct = default)
         {
@@ -45,6 +71,31 @@ namespace MornLib
             if (_settings == null) return;
             ApplyImmediate(_settings, false);
             MornAnimationUtil.SetDirty(this);
+        }
+
+        private float GetCurrentAlpha()
+        {
+            return _fadeTarget switch
+            {
+                FadeTarget.CanvasGroup when _canvasGroup != null => _canvasGroup.alpha,
+                FadeTarget.Image when _image != null => _image.color.a,
+                _ => 1f,
+            };
+        }
+
+        private void SetAlpha(float alpha)
+        {
+            switch (_fadeTarget)
+            {
+                case FadeTarget.CanvasGroup when _canvasGroup != null:
+                    _canvasGroup.alpha = alpha;
+                    break;
+                case FadeTarget.Image when _image != null:
+                    var c = _image.color;
+                    c.a = alpha;
+                    _image.color = c;
+                    break;
+            }
         }
 
         private async UniTask PlayAsync(MornAnimationSettings s, bool toShow, CancellationToken token)
@@ -98,8 +149,7 @@ namespace MornLib
 
         private async UniTask FadeAsync(MornAnimationSettings s, bool toShow, float duration, MornEaseType easeType, CancellationToken token)
         {
-            if (_canvasGroup == null) return;
-            var startAlpha = _canvasGroup.alpha;
+            var startAlpha = GetCurrentAlpha();
             var endAlpha = toShow ? _showAlpha : s.HideAlpha;
             var elapsed = 0f;
             while (elapsed < duration)
@@ -107,10 +157,10 @@ namespace MornLib
                 token.ThrowIfCancellationRequested();
                 elapsed += MornAnimationUtil.GetDeltaTime();
                 var t = Mathf.Clamp01(elapsed / duration).Ease(easeType);
-                _canvasGroup.alpha = Mathf.LerpUnclamped(startAlpha, endAlpha, t);
+                SetAlpha(Mathf.LerpUnclamped(startAlpha, endAlpha, t));
                 await MornAnimationUtil.WaitNextFrame(token);
             }
-            _canvasGroup.alpha = endAlpha;
+            SetAlpha(endAlpha);
         }
 
         private async UniTask TransformAsync(
@@ -139,9 +189,9 @@ namespace MornLib
 
         private void ApplyImmediate(MornAnimationSettings s, bool show)
         {
-            if (s.FadeEnabled && _canvasGroup != null)
+            if (s.FadeEnabled)
             {
-                _canvasGroup.alpha = show ? _showAlpha : s.HideAlpha;
+                SetAlpha(show ? _showAlpha : s.HideAlpha);
             }
             if (s.MoveEnabled && _rectTransform != null)
             {
