@@ -83,11 +83,10 @@ namespace MornLib
 			_targets = new List<MornAnimationBase>();
 			var exclude = new HashSet<MornAnimationBase> { this };
 
-			// 子孫のSequenceが管轄するtargetsを除外対象に
+			// 子孫のSequenceが管轄するtargetsを除外対象に（Sequence自体は含める）
 			foreach (var seq in GetComponentsInChildren<MornAnimationSequence>())
 			{
 				if (seq == this) continue;
-				exclude.Add(seq);
 				if (seq._targets != null)
 				{
 					foreach (var t in seq._targets) exclude.Add(t);
