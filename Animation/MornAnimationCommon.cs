@@ -135,7 +135,7 @@ namespace MornLib
                 tasks.Add(TransformAsync(
                     toShow, duration, easeType, token,
                     _showPosition, s.HidePositionOffset,
-                    s.HasSpawnPositionOffset, s.SpawnPositionOffset,
+                    s.SpawnPositionOffsetEnabled, s.SpawnPositionOffset,
                     () => _rectTransform.anchoredPosition,
                     v => _rectTransform.anchoredPosition = v));
             }

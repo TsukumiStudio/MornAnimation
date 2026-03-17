@@ -20,8 +20,8 @@ namespace MornLib
         [Header("Move")]
         [SerializeField] private bool _moveEnabled;
         [SerializeField, ShowIf(nameof(_moveEnabled))] private Vector3 _hidePositionOffset;
-        [SerializeField, ShowIf(nameof(_moveEnabled))] private bool _hasSpawnPositionOffset;
-        [SerializeField, ShowIf(nameof(_hasSpawnPositionOffset))] private Vector3 _spawnPositionOffset;
+        [SerializeField, ShowIf(nameof(_moveEnabled))] private bool _spawnPositionOffsetEnabled;
+        [SerializeField, ShowIf(nameof(_spawnPositionOffsetEnabled))] private Vector3 _spawnPositionOffset;
 
         [Header("Scale")]
         [SerializeField] private bool _scaleEnabled;
@@ -35,7 +35,7 @@ namespace MornLib
         public bool FadeEnabled => _fadeEnabled;
         public bool MoveEnabled => _moveEnabled;
         public Vector3 HidePositionOffset => _hidePositionOffset;
-        public bool HasSpawnPositionOffset => _hasSpawnPositionOffset;
+        public bool SpawnPositionOffsetEnabled => _spawnPositionOffsetEnabled;
         public Vector3 SpawnPositionOffset => _spawnPositionOffset;
         public bool ScaleEnabled => _scaleEnabled;
         public Vector3 HideScaleOffset => _hideScaleOffset;
