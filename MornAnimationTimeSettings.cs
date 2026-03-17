@@ -2,7 +2,7 @@ using UnityEngine;
 
 namespace MornLib
 {
-	[CreateAssetMenu(fileName = nameof(MornAnimationTimeSettings), menuName = "Morn/" + nameof(MornAnimationTimeSettings))]
+	[CreateAssetMenu(fileName = nameof(MornAnimationTimeSettings), menuName = "Morn/Animation/" + nameof(MornAnimationTimeSettings))]
 	public sealed class MornAnimationTimeSettings : ScriptableObject
 	{
 		[SerializeField] private float _showDuration = 0.3f;
