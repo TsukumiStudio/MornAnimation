@@ -80,8 +80,24 @@ namespace MornLib
 		[Button("子孫オブジェクトから自動取得")]
 		public void CollectFromChildren()
 		{
-			_targets = new List<MornAnimationBase>(GetComponentsInChildren<MornAnimationBase>());
-			_targets.Remove(this);
+			_targets = new List<MornAnimationBase>();
+			var exclude = new HashSet<MornAnimationBase> { this };
+
+			// 子孫のSequenceが管轄するtargetsを除外対象に
+			foreach (var seq in GetComponentsInChildren<MornAnimationSequence>())
+			{
+				if (seq == this) continue;
+				exclude.Add(seq);
+				if (seq._targets != null)
+				{
+					foreach (var t in seq._targets) exclude.Add(t);
+				}
+			}
+
+			foreach (var anim in GetComponentsInChildren<MornAnimationBase>())
+			{
+				if (!exclude.Contains(anim)) _targets.Add(anim);
+			}
 			MornAnimationUtil.SetDirty(this);
 		}
 
