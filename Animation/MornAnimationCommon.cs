@@ -73,6 +73,20 @@ namespace MornLib
             MornAnimationUtil.SetDirty(this);
         }
 
+        [Button]
+        public async UniTask DebugShow()
+        {
+            await ShowAsync();
+            MornAnimationUtil.SetDirty(this);
+        }
+
+        [Button]
+        public async UniTask DebugHide()
+        {
+            await HideAsync();
+            MornAnimationUtil.SetDirty(this);
+        }
+
         private float GetCurrentAlpha()
         {
             return _fadeTarget switch
