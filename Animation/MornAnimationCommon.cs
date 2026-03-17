@@ -165,16 +165,22 @@ namespace MornLib
         {
             var startAlpha = GetCurrentAlpha();
             var endAlpha = toShow ? _showAlpha : 0f;
-            var elapsed = 0f;
-            while (elapsed < duration)
+            try
             {
-                token.ThrowIfCancellationRequested();
-                elapsed += MornAnimationUtil.GetDeltaTime();
-                var t = Mathf.Clamp01(elapsed / duration).Ease(easeType);
-                SetAlpha(Mathf.LerpUnclamped(startAlpha, endAlpha, t));
-                await MornAnimationUtil.WaitNextFrame(token);
+                var elapsed = 0f;
+                while (elapsed < duration)
+                {
+                    token.ThrowIfCancellationRequested();
+                    elapsed += MornAnimationUtil.GetDeltaTime();
+                    var t = Mathf.Clamp01(elapsed / duration).Ease(easeType);
+                    SetAlpha(Mathf.LerpUnclamped(startAlpha, endAlpha, t));
+                    await MornAnimationUtil.WaitNextFrame(token);
+                }
             }
-            SetAlpha(endAlpha);
+            finally
+            {
+                SetAlpha(endAlpha);
+            }
         }
 
         private async UniTask TransformAsync(
@@ -189,16 +195,22 @@ namespace MornLib
             var startValue = toShow && hasSpawnOffset ? spawnValue : getter();
             var endValue = toShow ? showValue : hideValue;
             if (toShow && hasSpawnOffset) setter(startValue);
-            var elapsed = 0f;
-            while (elapsed < duration)
+            try
             {
-                token.ThrowIfCancellationRequested();
-                elapsed += MornAnimationUtil.GetDeltaTime();
-                var t = Mathf.Clamp01(elapsed / duration).Ease(easeType);
-                setter(Vector3.LerpUnclamped(startValue, endValue, t));
-                await MornAnimationUtil.WaitNextFrame(token);
+                var elapsed = 0f;
+                while (elapsed < duration)
+                {
+                    token.ThrowIfCancellationRequested();
+                    elapsed += MornAnimationUtil.GetDeltaTime();
+                    var t = Mathf.Clamp01(elapsed / duration).Ease(easeType);
+                    setter(Vector3.LerpUnclamped(startValue, endValue, t));
+                    await MornAnimationUtil.WaitNextFrame(token);
+                }
             }
-            setter(endValue);
+            finally
+            {
+                setter(endValue);
+            }
         }
 
         private void ApplyImmediate(MornAnimationSettings s, bool show)
