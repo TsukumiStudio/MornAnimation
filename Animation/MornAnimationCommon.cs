@@ -128,7 +128,7 @@ namespace MornLib
 
             if (s.FadeEnabled)
             {
-                tasks.Add(FadeAsync(s, toShow, duration, easeType, token));
+                tasks.Add(FadeAsync(toShow, duration, easeType, token));
             }
             if (s.MoveEnabled)
             {
@@ -161,10 +161,10 @@ namespace MornLib
             await UniTask.WhenAll(tasks);
         }
 
-        private async UniTask FadeAsync(MornAnimationSettings s, bool toShow, float duration, MornEaseType easeType, CancellationToken token)
+        private async UniTask FadeAsync(bool toShow, float duration, MornEaseType easeType, CancellationToken token)
         {
             var startAlpha = GetCurrentAlpha();
-            var endAlpha = toShow ? _showAlpha : s.HideAlpha;
+            var endAlpha = toShow ? _showAlpha : 0f;
             var elapsed = 0f;
             while (elapsed < duration)
             {
@@ -205,7 +205,7 @@ namespace MornLib
         {
             if (s.FadeEnabled)
             {
-                SetAlpha(show ? _showAlpha : s.HideAlpha);
+                SetAlpha(show ? _showAlpha : 0f);
             }
             if (s.MoveEnabled && _rectTransform != null)
             {

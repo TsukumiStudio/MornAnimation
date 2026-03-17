@@ -16,7 +16,6 @@ namespace MornLib
 
         [Header("Fade")]
         [SerializeField] private bool _fadeEnabled;
-        [SerializeField, ShowIf(nameof(_fadeEnabled))] private float _hideAlpha;
 
         [Header("Move")]
         [SerializeField] private bool _moveEnabled;
@@ -34,7 +33,6 @@ namespace MornLib
 
         public MornAnimationTimeSettings TimeSettings => _timeSettings != null ? _timeSettings : MornAnimationGlobal.I.TimeSettings;
         public bool FadeEnabled => _fadeEnabled;
-        public float HideAlpha => _hideAlpha;
         public bool MoveEnabled => _moveEnabled;
         public Vector3 HidePositionOffset => _hidePositionOffset;
         public bool HasSpawnPositionOffset => _hasSpawnPositionOffset;
