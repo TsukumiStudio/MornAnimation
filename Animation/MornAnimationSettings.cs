@@ -5,41 +5,41 @@ namespace MornLib
     /// <summary>
     /// アニメーションモーションの定義。ScriptableObjectとして管理し、
     /// MornAnimationCommonのリストに積んで使う。
-    /// ターゲットの参照は持たず、相対的な変化量とタイミングを定義する。
+    /// Show時の目標値はCommon側が持ち、こちらはHide時のオフセットとタイミングを定義する。
     /// </summary>
     [CreateAssetMenu(fileName = nameof(MornAnimationSettings), menuName = "Morn/" + nameof(MornAnimationSettings))]
     public sealed class MornAnimationSettings : ScriptableObject
     {
-        public enum MotionType
-        {
-            Fade,
-            Move,
-            Scale,
-            Rotate,
-        }
-
-        [SerializeField] private MotionType _motionType;
         [SerializeField] private MornAnimationTimeSettings _timeSettings;
 
-        [Header("Fade (MotionType=Fade)")]
-        [SerializeField] private float _showAlpha = 1f;
+        [Header("Fade")]
+        [SerializeField] private bool _fadeEnabled;
         [SerializeField] private float _hideAlpha;
 
-        [Header("Transform (MotionType=Move/Scale/Rotate)")]
-        [SerializeField] private Vector3 _showValue;
-        [SerializeField] private Vector3 _hideOffset;
-        [SerializeField] private bool _hasSpawnOffset;
-        [SerializeField] private Vector3 _spawnOffset;
+        [Header("Move")]
+        [SerializeField] private bool _moveEnabled;
+        [SerializeField] private Vector3 _hidePositionOffset;
+        [SerializeField] private bool _hasSpawnPositionOffset;
+        [SerializeField] private Vector3 _spawnPositionOffset;
 
-        public MotionType Type => _motionType;
+        [Header("Scale")]
+        [SerializeField] private bool _scaleEnabled;
+        [SerializeField] private Vector3 _hideScaleOffset;
+
+        [Header("Rotate")]
+        [SerializeField] private bool _rotateEnabled;
+        [SerializeField] private Vector3 _hideRotateOffset;
+
         public MornAnimationTimeSettings TimeSettings => _timeSettings;
-        public float ShowAlpha => _showAlpha;
+        public bool FadeEnabled => _fadeEnabled;
         public float HideAlpha => _hideAlpha;
-        public Vector3 ShowValue => _showValue;
-        public Vector3 HideOffset => _hideOffset;
-        public bool HasSpawnOffset => _hasSpawnOffset;
-        public Vector3 SpawnOffset => _spawnOffset;
-        public Vector3 HideValue => _showValue + _hideOffset;
-        public Vector3 SpawnValue => _showValue + _spawnOffset;
+        public bool MoveEnabled => _moveEnabled;
+        public Vector3 HidePositionOffset => _hidePositionOffset;
+        public bool HasSpawnPositionOffset => _hasSpawnPositionOffset;
+        public Vector3 SpawnPositionOffset => _spawnPositionOffset;
+        public bool ScaleEnabled => _scaleEnabled;
+        public Vector3 HideScaleOffset => _hideScaleOffset;
+        public bool RotateEnabled => _rotateEnabled;
+        public Vector3 HideRotateOffset => _hideRotateOffset;
     }
 }
