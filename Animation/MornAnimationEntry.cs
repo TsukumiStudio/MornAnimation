@@ -14,6 +14,11 @@ namespace MornLib
 		[SerializeField] private MornAnimationBase _target;
 		[SerializeField] private bool _toShow;
 
+		public static MornAnimationEntry Create(MornAnimationBase target, bool toShow)
+		{
+			return new MornAnimationEntry { _target = target, _toShow = toShow };
+		}
+
 		public async UniTask ExecuteAsync(CancellationToken ct = default)
 		{
 			if (_toShow)

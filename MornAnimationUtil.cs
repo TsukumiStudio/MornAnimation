@@ -120,5 +120,35 @@ namespace MornLib
 			}
 #endif
 		}
+
+		/// <summary>
+		/// 子孫のMornAnimationBaseを収集する。
+		/// 自身と、子孫のSequenceが管轄するtargetsは除外する。
+		/// </summary>
+		public static System.Collections.Generic.List<MornAnimationBase> CollectChildAnimations(Component root)
+		{
+			var exclude = new System.Collections.Generic.HashSet<MornAnimationBase>();
+
+			// root自身がMornAnimationBaseなら除外
+			if (root is MornAnimationBase selfAnim) exclude.Add(selfAnim);
+
+			// 子孫のSequenceが管轄するtargetsを除外対象に
+			foreach (var seq in root.GetComponentsInChildren<MornAnimationSequence>())
+			{
+				if (seq == root as object) continue;
+				var seqTargets = seq.GetTargetsForExclusion();
+				if (seqTargets != null)
+				{
+					foreach (var t in seqTargets) exclude.Add(t);
+				}
+			}
+
+			var result = new System.Collections.Generic.List<MornAnimationBase>();
+			foreach (var anim in root.GetComponentsInChildren<MornAnimationBase>())
+			{
+				if (!exclude.Contains(anim)) result.Add(anim);
+			}
+			return result;
+		}
 	}
 }

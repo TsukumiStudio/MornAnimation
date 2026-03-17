@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
@@ -77,26 +76,13 @@ namespace MornLib
 			await UniTask.WhenAll(taskList);
 		}
 
+		/// <summary>除外判定用にtargetsを返す。</summary>
+		internal IEnumerable<MornAnimationBase> GetTargetsForExclusion() => _targets;
+
 		[Button("子孫オブジェクトから自動取得")]
 		public void CollectFromChildren()
 		{
-			_targets = new List<MornAnimationBase>();
-			var exclude = new HashSet<MornAnimationBase> { this };
-
-			// 子孫のSequenceが管轄するtargetsを除外対象に（Sequence自体は含める）
-			foreach (var seq in GetComponentsInChildren<MornAnimationSequence>())
-			{
-				if (seq == this) continue;
-				if (seq._targets != null)
-				{
-					foreach (var t in seq._targets) exclude.Add(t);
-				}
-			}
-
-			foreach (var anim in GetComponentsInChildren<MornAnimationBase>())
-			{
-				if (!exclude.Contains(anim)) _targets.Add(anim);
-			}
+			_targets = MornAnimationUtil.CollectChildAnimations(this);
 			MornAnimationUtil.SetDirty(this);
 		}
 

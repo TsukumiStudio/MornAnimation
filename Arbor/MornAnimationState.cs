@@ -30,6 +30,29 @@ namespace MornLib
 			{
 			}
 		}
+
+		[Button("子孫オブジェクトから自動取得 (Show)")]
+		public void CollectFromChildrenShow()
+		{
+			CollectFromChildren(true);
+		}
+
+		[Button("子孫オブジェクトから自動取得 (Hide)")]
+		public void CollectFromChildrenHide()
+		{
+			CollectFromChildren(false);
+		}
+
+		private void CollectFromChildren(bool toShow)
+		{
+			var anims = MornAnimationUtil.CollectChildAnimations(this);
+			_targets = new List<MornAnimationEntry>();
+			foreach (var anim in anims)
+			{
+				_targets.Add(MornAnimationEntry.Create(anim, toShow));
+			}
+			MornAnimationUtil.SetDirty(this);
+		}
 	}
 }
 #endif
