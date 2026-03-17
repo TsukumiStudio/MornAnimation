@@ -30,7 +30,7 @@ namespace MornLib
 		public override UniTask ShowAsync(CancellationToken ct = default)
 		{
 			_cts?.Cancel();
-			_cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+			_cts = CancellationTokenSource.CreateLinkedTokenSource(ct, destroyCancellationToken);
 			ct = _cts.Token;
 			var tasks = new List<UniTask>();
 			foreach (var module in GetModules())
@@ -44,7 +44,7 @@ namespace MornLib
 		public override UniTask HideAsync(CancellationToken ct = default)
 		{
 			_cts?.Cancel();
-			_cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+			_cts = CancellationTokenSource.CreateLinkedTokenSource(ct, destroyCancellationToken);
 			ct = _cts.Token;
 			var tasks = new List<UniTask>();
 			foreach (var module in GetModules())

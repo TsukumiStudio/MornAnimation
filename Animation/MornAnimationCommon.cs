@@ -70,7 +70,7 @@ namespace MornLib
         {
             if (_settings == null) return UniTask.CompletedTask;
             _cts?.Cancel();
-            _cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            _cts = CancellationTokenSource.CreateLinkedTokenSource(ct, destroyCancellationToken);
             return PlayAsync(_settings, true, _cts.Token);
         }
 
@@ -78,7 +78,7 @@ namespace MornLib
         {
             if (_settings == null) return UniTask.CompletedTask;
             _cts?.Cancel();
-            _cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+            _cts = CancellationTokenSource.CreateLinkedTokenSource(ct, destroyCancellationToken);
             return PlayAsync(_settings, false, _cts.Token);
         }
 

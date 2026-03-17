@@ -31,7 +31,7 @@ namespace MornLib
 		private async UniTask SequenceAsync(bool toShow, CancellationToken ct = default)
 		{
 			_cts?.Cancel();
-			_cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
+			_cts = CancellationTokenSource.CreateLinkedTokenSource(ct, destroyCancellationToken);
 			ct = _cts.Token;
 			var delay = toShow ? _showDelay : _hideDelay;
 			if (delay > 0f)
