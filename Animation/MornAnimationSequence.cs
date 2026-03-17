@@ -10,8 +10,8 @@ namespace MornLib
 	internal sealed class MornAnimationSequence : MornAnimationBase
 	{
 		[SerializeField] private List<MornAnimationBase> _targets;
-		[SerializeField] private float _showInterval;
-		[SerializeField] private float _hideInterval;
+		[SerializeField] private float _showInterval = 0.03f;
+		[SerializeField] private float _hideInterval = 0.03f;
 		[SerializeField] private float _showDelay;
 		[SerializeField] private float _hideDelay;
 		[SerializeField] private bool _hideReverse;
