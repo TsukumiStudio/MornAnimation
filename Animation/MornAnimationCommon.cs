@@ -35,6 +35,23 @@ namespace MornLib
         private bool IsCanvasGroup => _fadeTarget == FadeTarget.CanvasGroup;
         private bool IsImage => _fadeTarget == FadeTarget.Image;
 
+        private void Reset()
+        {
+            _rectTransform = GetComponent<RectTransform>();
+            var cg = GetComponent<CanvasGroup>();
+            var img = GetComponent<Image>();
+            if (cg != null)
+            {
+                _fadeTarget = FadeTarget.CanvasGroup;
+                _canvasGroup = cg;
+            }
+            else if (img != null)
+            {
+                _fadeTarget = FadeTarget.Image;
+                _image = img;
+            }
+        }
+
         /// <summary>現在の座標・Scale・Rotation・Alphaを ShowState に取り込む。</summary>
         [Button("現在の状態をShowStateに設定")]
         public void CaptureCurrentAsShowState()
