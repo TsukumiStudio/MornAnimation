@@ -114,7 +114,7 @@ namespace MornLib
 
         private async UniTask PlayAsync(MornAnimationSettings s, bool toShow, CancellationToken token)
         {
-            var time = s.TimeSettings != null ? s.TimeSettings : MornAnimationGlobal.I.TimeSettings;
+            var time = s.TimeSettings;
             var duration = toShow ? time.ShowDuration : time.HideDuration;
             var delay = toShow ? time.ShowDelay : time.HideDelay;
             var easeType = toShow ? time.ShowEaseType : time.HideEaseType;

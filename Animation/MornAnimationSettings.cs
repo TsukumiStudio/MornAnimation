@@ -10,7 +10,9 @@ namespace MornLib
     [CreateAssetMenu(fileName = nameof(MornAnimationSettings), menuName = "Morn/Animation/" + nameof(MornAnimationSettings))]
     public sealed class MornAnimationSettings : ScriptableObject
     {
-        [SerializeField] private MornAnimationTimeSettings _timeSettings;
+        [SerializeField, Tooltip("未設定(null)の場合はMornAnimationGlobalのTimeSettingsを使用")]
+        [Label("TimeSettings (Override)")]
+        private MornAnimationTimeSettings _timeSettings;
 
         [Header("Fade")]
         [SerializeField] private bool _fadeEnabled;
@@ -30,7 +32,7 @@ namespace MornLib
         [SerializeField] private bool _rotateEnabled;
         [SerializeField, ShowIf(nameof(_rotateEnabled))] private Vector3 _hideRotateOffset;
 
-        public MornAnimationTimeSettings TimeSettings => _timeSettings;
+        public MornAnimationTimeSettings TimeSettings => _timeSettings != null ? _timeSettings : MornAnimationGlobal.I.TimeSettings;
         public bool FadeEnabled => _fadeEnabled;
         public float HideAlpha => _hideAlpha;
         public bool MoveEnabled => _moveEnabled;
