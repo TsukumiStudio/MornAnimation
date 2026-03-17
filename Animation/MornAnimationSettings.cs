@@ -14,21 +14,21 @@ namespace MornLib
 
         [Header("Fade")]
         [SerializeField] private bool _fadeEnabled;
-        [SerializeField] private float _hideAlpha;
+        [SerializeField, ShowIf(nameof(_fadeEnabled))] private float _hideAlpha;
 
         [Header("Move")]
         [SerializeField] private bool _moveEnabled;
-        [SerializeField] private Vector3 _hidePositionOffset;
-        [SerializeField] private bool _hasSpawnPositionOffset;
-        [SerializeField] private Vector3 _spawnPositionOffset;
+        [SerializeField, ShowIf(nameof(_moveEnabled))] private Vector3 _hidePositionOffset;
+        [SerializeField, ShowIf(nameof(_moveEnabled))] private bool _hasSpawnPositionOffset;
+        [SerializeField, ShowIf(nameof(_hasSpawnPositionOffset))] private Vector3 _spawnPositionOffset;
 
         [Header("Scale")]
         [SerializeField] private bool _scaleEnabled;
-        [SerializeField] private Vector3 _hideScaleOffset;
+        [SerializeField, ShowIf(nameof(_scaleEnabled))] private Vector3 _hideScaleOffset;
 
         [Header("Rotate")]
         [SerializeField] private bool _rotateEnabled;
-        [SerializeField] private Vector3 _hideRotateOffset;
+        [SerializeField, ShowIf(nameof(_rotateEnabled))] private Vector3 _hideRotateOffset;
 
         public MornAnimationTimeSettings TimeSettings => _timeSettings;
         public bool FadeEnabled => _fadeEnabled;
