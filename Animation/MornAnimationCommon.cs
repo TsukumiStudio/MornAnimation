@@ -6,12 +6,12 @@ using UnityEngine;
 namespace MornLib
 {
     /// <summary>
-    /// MornAnimationSettingsをリストで持ち、Show/Hideでまとめてアニメーションする。
+    /// MornAnimationSettingsを1つ持ち、Show/Hideでアニメーションする。
     /// Show時の目標値（ShowAlpha, ShowPosition等）はこちらが保持する。
     /// </summary>
     public sealed class MornAnimationCommon : MornAnimationBase
     {
-        [SerializeField] private List<MornAnimationSettings> _settings = new();
+        [SerializeField] private MornAnimationSettings _settings;
         [SerializeField] private CanvasGroup _canvasGroup;
         [SerializeField] private RectTransform _rectTransform;
 
@@ -25,40 +25,25 @@ namespace MornLib
 
         public override UniTask ShowAsync(CancellationToken ct = default)
         {
+            if (_settings == null) return UniTask.CompletedTask;
             _cts?.Cancel();
             _cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
-            var token = _cts.Token;
-            var tasks = new List<UniTask>();
-            foreach (var s in _settings)
-            {
-                if (s == null) continue;
-                tasks.Add(PlayAsync(s, true, token));
-            }
-            return UniTask.WhenAll(tasks);
+            return PlayAsync(_settings, true, _cts.Token);
         }
 
         public override UniTask HideAsync(CancellationToken ct = default)
         {
+            if (_settings == null) return UniTask.CompletedTask;
             _cts?.Cancel();
             _cts = CancellationTokenSource.CreateLinkedTokenSource(ct);
-            var token = _cts.Token;
-            var tasks = new List<UniTask>();
-            foreach (var s in _settings)
-            {
-                if (s == null) continue;
-                tasks.Add(PlayAsync(s, false, token));
-            }
-            return UniTask.WhenAll(tasks);
+            return PlayAsync(_settings, false, _cts.Token);
         }
 
         [Button]
         public override void DebugInitialize()
         {
-            foreach (var s in _settings)
-            {
-                if (s == null) continue;
-                ApplyImmediate(s, false);
-            }
+            if (_settings == null) return;
+            ApplyImmediate(_settings, false);
             MornAnimationUtil.SetDirty(this);
         }
 
