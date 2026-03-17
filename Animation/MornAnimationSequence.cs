@@ -77,6 +77,21 @@ namespace MornLib
 			await UniTask.WhenAll(taskList);
 		}
 
+		[Button("子オブジェクトから自動取得")]
+		public void CollectFromChildren()
+		{
+			_targets = new List<MornAnimationBase>();
+			foreach (Transform child in transform)
+			{
+				var anim = child.GetComponent<MornAnimationBase>();
+				if (anim != null)
+				{
+					_targets.Add(anim);
+				}
+			}
+			MornAnimationUtil.SetDirty(this);
+		}
+
 		[Button]
 		public override void DebugInitialize()
 		{
