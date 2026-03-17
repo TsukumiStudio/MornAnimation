@@ -35,6 +35,11 @@ namespace MornLib
         private bool IsCanvasGroup => _fadeTarget == FadeTarget.CanvasGroup;
         private bool IsImage => _fadeTarget == FadeTarget.Image;
 
+        private void Awake()
+        {
+            if (_settings != null) ApplyImmediate(_settings, false);
+        }
+
         private void Reset()
         {
             _rectTransform = GetComponent<RectTransform>();
