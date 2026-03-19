@@ -146,7 +146,7 @@ namespace MornLib
 			var result = new System.Collections.Generic.List<MornAnimationBase>();
 			foreach (var anim in root.GetComponentsInChildren<MornAnimationBase>())
 			{
-				if (!exclude.Contains(anim)) result.Add(anim);
+				if (!exclude.Contains(anim) && !anim.ExcludeFromAutoCollect) result.Add(anim);
 			}
 			return result;
 		}
