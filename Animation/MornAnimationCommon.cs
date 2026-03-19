@@ -20,8 +20,15 @@ namespace MornLib
             TMP_Text,
         }
 
+        private enum MoveTarget
+        {
+            RectTransform,
+            Transform,
+        }
+
         [SerializeField] private MornAnimationSettings _settings;
-        [SerializeField] private RectTransform _rectTransform;
+        [SerializeField] private MoveTarget _moveTarget;
+        [SerializeField, ShowIf(nameof(IsMoveRectTransform))] private RectTransform _rectTransform;
         [SerializeField] private FadeTarget _fadeTarget;
         [SerializeField, ShowIf(nameof(IsCanvasGroup))] private CanvasGroup _canvasGroup;
         [SerializeField, ShowIf(nameof(IsImage))] private Image _image;
@@ -35,6 +42,7 @@ namespace MornLib
 
         private CancellationTokenSource _cts;
 
+        private bool IsMoveRectTransform => _moveTarget == MoveTarget.RectTransform;
         private bool IsCanvasGroup => _fadeTarget == FadeTarget.CanvasGroup;
         private bool IsImage => _fadeTarget == FadeTarget.Image;
         private bool IsTMPText => _fadeTarget == FadeTarget.TMP_Text;
@@ -46,7 +54,26 @@ namespace MornLib
 
         private void Reset()
         {
-            _rectTransform = GetComponent<RectTransform>();
+            // MoveTarget: RectTransform優先、なければTransform
+            var rt = GetComponent<RectTransform>();
+            if (rt != null)
+            {
+                _moveTarget = MoveTarget.RectTransform;
+                _rectTransform = rt;
+                _showPosition = rt.anchoredPosition;
+                _showScale = rt.localScale;
+                _showRotation = rt.localEulerAngles;
+            }
+            else
+            {
+                _moveTarget = MoveTarget.Transform;
+                _rectTransform = null;
+                _showPosition = transform.localPosition;
+                _showScale = transform.localScale;
+                _showRotation = transform.localEulerAngles;
+            }
+
+            // FadeTarget
             var cg = GetComponent<CanvasGroup>();
             var img = GetComponent<Image>();
             var tmp = GetComponent<TMP_Text>();
@@ -71,12 +98,9 @@ namespace MornLib
         [Button("現在の状態をShowStateに設定")]
         public void CaptureCurrentAsShowState()
         {
-            if (_rectTransform != null)
-            {
-                _showPosition = _rectTransform.anchoredPosition;
-                _showScale = _rectTransform.localScale;
-                _showRotation = _rectTransform.localEulerAngles;
-            }
+            _showPosition = GetPosition();
+            _showScale = transform.localScale;
+            _showRotation = transform.localEulerAngles;
             _showAlpha = GetCurrentAlpha();
             MornAnimationUtil.SetDirty(this);
         }
@@ -174,8 +198,8 @@ namespace MornLib
                     toShow, duration, easeType, token,
                     _showPosition, s.HidePositionOffset,
                     s.SpawnPositionOffsetEnabled, s.SpawnPositionOffset,
-                    () => _rectTransform.anchoredPosition,
-                    v => _rectTransform.anchoredPosition = v));
+                    () => GetPosition(),
+                    v => SetPosition(v)));
             }
             if (s.ScaleEnabled)
             {
@@ -183,8 +207,8 @@ namespace MornLib
                     toShow, duration, easeType, token,
                     _showScale, s.HideScaleOffset,
                     false, Vector3.zero,
-                    () => _rectTransform.localScale,
-                    v => _rectTransform.localScale = v));
+                    () => transform.localScale,
+                    v => transform.localScale = v));
             }
             if (s.RotateEnabled)
             {
@@ -192,8 +216,8 @@ namespace MornLib
                     toShow, duration, easeType, token,
                     _showRotation, s.HideRotateOffset,
                     false, Vector3.zero,
-                    () => _rectTransform.localEulerAngles,
-                    v => _rectTransform.localEulerAngles = v));
+                    () => transform.localEulerAngles,
+                    v => transform.localEulerAngles = v));
             }
 
             await UniTask.WhenAll(tasks);
@@ -228,7 +252,6 @@ namespace MornLib
             bool hasSpawnOffset, Vector3 spawnOffset,
             System.Func<Vector3> getter, System.Action<Vector3> setter)
         {
-            if (_rectTransform == null) return;
             var hideValue = showValue + hideOffset;
             var spawnValue = showValue + spawnOffset;
             var startValue = toShow && hasSpawnOffset ? spawnValue : getter();
@@ -240,7 +263,7 @@ namespace MornLib
                 while (elapsed < duration)
                 {
                     token.ThrowIfCancellationRequested();
-                    if (_rectTransform == null) return;
+                    if (this == null) return;
                     elapsed += MornAnimationUtil.GetDeltaTime();
                     var t = Mathf.Clamp01(elapsed / duration).Ease(easeType);
                     setter(Vector3.LerpUnclamped(startValue, endValue, t));
@@ -249,7 +272,30 @@ namespace MornLib
             }
             finally
             {
-                if (_rectTransform != null) setter(endValue);
+                if (this != null) setter(endValue);
+            }
+        }
+
+        private Vector3 GetPosition()
+        {
+            return _moveTarget switch
+            {
+                MoveTarget.RectTransform => (Vector3)_rectTransform.anchoredPosition,
+                MoveTarget.Transform => transform.localPosition,
+                _ => Vector3.zero,
+            };
+        }
+
+        private void SetPosition(Vector3 value)
+        {
+            switch (_moveTarget)
+            {
+                case MoveTarget.RectTransform:
+                    _rectTransform.anchoredPosition = value;
+                    break;
+                case MoveTarget.Transform:
+                    transform.localPosition = value;
+                    break;
             }
         }
 
@@ -259,17 +305,17 @@ namespace MornLib
             {
                 SetAlpha(show ? _showAlpha : 0f);
             }
-            if (s.MoveEnabled && _rectTransform != null)
+            if (s.MoveEnabled)
             {
-                _rectTransform.anchoredPosition = show ? _showPosition : _showPosition + s.HidePositionOffset;
+                SetPosition(show ? _showPosition : _showPosition + s.HidePositionOffset);
             }
-            if (s.ScaleEnabled && _rectTransform != null)
+            if (s.ScaleEnabled)
             {
-                _rectTransform.localScale = show ? _showScale : _showScale + s.HideScaleOffset;
+                transform.localScale = show ? _showScale : _showScale + s.HideScaleOffset;
             }
-            if (s.RotateEnabled && _rectTransform != null)
+            if (s.RotateEnabled)
             {
-                _rectTransform.localEulerAngles = show ? _showRotation : _showRotation + s.HideRotateOffset;
+                transform.localEulerAngles = show ? _showRotation : _showRotation + s.HideRotateOffset;
             }
         }
     }
