@@ -15,23 +15,19 @@ namespace MornLib
 		[SerializeField] private float _hideDelay;
 		[SerializeField] private bool _hideReverse;
 		[SerializeField] private bool _isWaitEach;
-		private CancellationTokenSource _cts;
 
 		public override async UniTask ShowAsync(CancellationToken ct = default)
 		{
-			await SequenceAsync(true, ct);
+			await RunSequenceAsync(true, ct);
 		}
 
 		public override async UniTask HideAsync(CancellationToken ct = default)
 		{
-			await SequenceAsync(false, ct);
+			await RunSequenceAsync(false, ct);
 		}
 
-		private async UniTask SequenceAsync(bool toShow, CancellationToken ct = default)
+		private async UniTask RunSequenceAsync(bool toShow, CancellationToken ct)
 		{
-			_cts?.Cancel();
-			_cts = CancellationTokenSource.CreateLinkedTokenSource(ct, destroyCancellationToken);
-			ct = _cts.Token;
 			var delay = toShow ? _showDelay : _hideDelay;
 			if (delay > 0f)
 			{
@@ -40,36 +36,22 @@ namespace MornLib
 
 			var taskList = new List<UniTask>();
 			var targets = !toShow && _hideReverse ? _targets.AsReadOnly().Reverse() : _targets;
+			var interval = toShow ? _showInterval : _hideInterval;
+
 			foreach (var target in targets)
 			{
-				if (toShow)
-				{
-					taskList.Add(target.ShowAsync(ct));
-					if (_isWaitEach)
-					{
-						await UniTask.WhenAll(taskList);
-						taskList.Clear();
-					}
+				var task = toShow ? target.ShowAsync(ct) : target.HideAsync(ct);
+				taskList.Add(task);
 
-					if (_showInterval > 0f)
-					{
-						await MornAnimationUtil.WaitSeconds(_showInterval, ct);
-					}
+				if (_isWaitEach)
+				{
+					await UniTask.WhenAll(taskList);
+					taskList.Clear();
 				}
-				else
+
+				if (interval > 0f)
 				{
-					taskList.Add(target.HideAsync(ct));
-
-					if (_isWaitEach)
-					{
-						await UniTask.WhenAll(taskList);
-						taskList.Clear();
-					}
-
-					if (_hideInterval > 0f)
-					{
-						await MornAnimationUtil.WaitSeconds(_hideInterval, ct);
-					}
+					await MornAnimationUtil.WaitSeconds(interval, ct);
 				}
 			}
 

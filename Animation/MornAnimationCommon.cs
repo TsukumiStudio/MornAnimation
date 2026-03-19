@@ -1,6 +1,7 @@
 using System.Collections.Generic;
 using System.Threading;
 using Cysharp.Threading.Tasks;
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -16,6 +17,7 @@ namespace MornLib
         {
             CanvasGroup,
             Image,
+            TMP_Text,
         }
 
         [SerializeField] private MornAnimationSettings _settings;
@@ -23,6 +25,7 @@ namespace MornLib
         [SerializeField] private FadeTarget _fadeTarget;
         [SerializeField, ShowIf(nameof(IsCanvasGroup))] private CanvasGroup _canvasGroup;
         [SerializeField, ShowIf(nameof(IsImage))] private Image _image;
+        [SerializeField, ShowIf(nameof(IsTMPText))] private TMP_Text _tmpText;
 
         [Header("Show State")]
         [SerializeField] private float _showAlpha = 1f;
@@ -34,6 +37,7 @@ namespace MornLib
 
         private bool IsCanvasGroup => _fadeTarget == FadeTarget.CanvasGroup;
         private bool IsImage => _fadeTarget == FadeTarget.Image;
+        private bool IsTMPText => _fadeTarget == FadeTarget.TMP_Text;
 
         private void Awake()
         {
@@ -45,6 +49,7 @@ namespace MornLib
             _rectTransform = GetComponent<RectTransform>();
             var cg = GetComponent<CanvasGroup>();
             var img = GetComponent<Image>();
+            var tmp = GetComponent<TMP_Text>();
             if (cg != null)
             {
                 _fadeTarget = FadeTarget.CanvasGroup;
@@ -54,6 +59,11 @@ namespace MornLib
             {
                 _fadeTarget = FadeTarget.Image;
                 _image = img;
+            }
+            else if (tmp != null)
+            {
+                _fadeTarget = FadeTarget.TMP_Text;
+                _tmpText = tmp;
             }
         }
 
@@ -115,6 +125,7 @@ namespace MornLib
             {
                 FadeTarget.CanvasGroup when _canvasGroup != null => _canvasGroup.alpha,
                 FadeTarget.Image when _image != null => _image.color.a,
+                FadeTarget.TMP_Text when _tmpText != null => _tmpText.color.a,
                 _ => 1f,
             };
         }
@@ -130,6 +141,11 @@ namespace MornLib
                     var c = _image.color;
                     c.a = alpha;
                     _image.color = c;
+                    break;
+                case FadeTarget.TMP_Text when _tmpText != null:
+                    var tc = _tmpText.color;
+                    tc.a = alpha;
+                    _tmpText.color = tc;
                     break;
             }
         }
@@ -193,6 +209,7 @@ namespace MornLib
                 while (elapsed < duration)
                 {
                     token.ThrowIfCancellationRequested();
+                    if (this == null) return;
                     elapsed += MornAnimationUtil.GetDeltaTime();
                     var t = Mathf.Clamp01(elapsed / duration).Ease(easeType);
                     SetAlpha(Mathf.LerpUnclamped(startAlpha, endAlpha, t));
@@ -201,7 +218,7 @@ namespace MornLib
             }
             finally
             {
-                SetAlpha(endAlpha);
+                if (this != null) SetAlpha(endAlpha);
             }
         }
 
@@ -223,6 +240,7 @@ namespace MornLib
                 while (elapsed < duration)
                 {
                     token.ThrowIfCancellationRequested();
+                    if (_rectTransform == null) return;
                     elapsed += MornAnimationUtil.GetDeltaTime();
                     var t = Mathf.Clamp01(elapsed / duration).Ease(easeType);
                     setter(Vector3.LerpUnclamped(startValue, endValue, t));
@@ -231,7 +249,7 @@ namespace MornLib
             }
             finally
             {
-                setter(endValue);
+                if (_rectTransform != null) setter(endValue);
             }
         }
 
