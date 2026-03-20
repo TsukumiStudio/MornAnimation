@@ -52,18 +52,16 @@ namespace MornLib
         {
             if (_autoPivotCenter && _moveTarget == MoveTarget.RectTransform && _rectTransform != null)
             {
-                SetPivotWithoutMoving(_rectTransform, new Vector2(0.5f, 0.5f));
+                var oldPivot = _rectTransform.pivot;
+                var newPivot = new Vector2(0.5f, 0.5f);
+                var delta = newPivot - oldPivot;
+                var size = _rectTransform.rect.size;
+                var offset = new Vector3(delta.x * size.x, delta.y * size.y, 0f);
+
+                _rectTransform.pivot = newPivot;
+                _showPosition += offset;
             }
             if (_settings != null) ApplyImmediate(_settings, false);
-        }
-
-        private static void SetPivotWithoutMoving(RectTransform rt, Vector2 newPivot)
-        {
-            var oldPivot = rt.pivot;
-            var delta = newPivot - oldPivot;
-            var size = rt.rect.size;
-            rt.pivot = newPivot;
-            rt.anchoredPosition += new Vector2(delta.x * size.x, delta.y * size.y);
         }
 
         private void Reset()
