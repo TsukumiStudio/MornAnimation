@@ -53,6 +53,7 @@ namespace MornLib
 
 			var duration = _settings.Duration;
 			var easeType = _settings.EaseType;
+			var vibration = _settings.Vibration;
 
 			// 元の値を保存
 			var originalPosition = GetPosition();
@@ -62,33 +63,38 @@ namespace MornLib
 			try
 			{
 				var elapsed = 0f;
+				var vibrationInterval = vibration > 0f ? 1f / vibration : 0f;
+				var nextVibrationTime = 0f;
+				var currentShakePos = Vector3.zero;
+				var currentShakeRot = Vector3.zero;
+				var currentShakeScale = Vector3.zero;
+
 				while (elapsed < duration)
 				{
 					ct.ThrowIfCancellationRequested();
 					if (this == null) return;
 					elapsed += MornAnimationUtil.GetDeltaTime();
 					var t = Mathf.Clamp01(elapsed / duration);
-
-					// 減衰係数（1→0）
 					var decay = (1f - t).Ease(easeType);
 
+					// vibrationタイミングで新しいランダム値を生成
+					if (elapsed >= nextVibrationTime)
+					{
+						if (_settings.ShakePositionEnabled)
+							currentShakePos = RandomShake(_settings.ShakePositionIntensity);
+						if (_settings.ShakeRotationEnabled)
+							currentShakeRot = RandomShake(_settings.ShakeRotationIntensity);
+						if (_settings.ShakeScaleEnabled)
+							currentShakeScale = RandomShake(_settings.ShakeScaleIntensity);
+						nextVibrationTime = vibrationInterval > 0f ? elapsed + vibrationInterval : float.MaxValue;
+					}
+
 					if (_settings.ShakePositionEnabled)
-					{
-						var shake = RandomShake(_settings.ShakePositionIntensity) * decay;
-						SetPosition(originalPosition + shake);
-					}
-
+						SetPosition(originalPosition + currentShakePos * decay);
 					if (_settings.ShakeRotationEnabled)
-					{
-						var shake = RandomShake(_settings.ShakeRotationIntensity) * decay;
-						transform.localEulerAngles = originalRotation + shake;
-					}
-
+						transform.localEulerAngles = originalRotation + currentShakeRot * decay;
 					if (_settings.ShakeScaleEnabled)
-					{
-						var shake = RandomShake(_settings.ShakeScaleIntensity) * decay;
-						transform.localScale = originalScale + shake;
-					}
+						transform.localScale = originalScale + currentShakeScale * decay;
 
 					await MornAnimationUtil.WaitNextFrame(ct);
 				}

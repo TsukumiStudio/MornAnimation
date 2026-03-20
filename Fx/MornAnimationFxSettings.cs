@@ -10,6 +10,8 @@ namespace MornLib
 	{
 		[SerializeField] private float _duration = 0.3f;
 		[SerializeField] private MornEaseType _easeType = MornEaseType.EaseOutQuart;
+		[SerializeField, Tooltip("1秒あたりの振動回数")]
+		private float _vibration = 20f;
 
 		[Header("Shake Position")]
 		[SerializeField] private bool _shakePositionEnabled;
@@ -25,6 +27,7 @@ namespace MornLib
 
 		public float Duration => _duration;
 		public MornEaseType EaseType => _easeType;
+		public float Vibration => _vibration;
 		public bool ShakePositionEnabled => _shakePositionEnabled;
 		public Vector3 ShakePositionIntensity => _shakePositionIntensity;
 		public bool ShakeRotationEnabled => _shakeRotationEnabled;
