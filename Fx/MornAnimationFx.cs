@@ -101,13 +101,14 @@ namespace MornLib
 					if (_settings.ShakeScaleEnabled)
 						scaleOffset += currentShakeScale * decay;
 
-					// Punch: intensity方向にガッと出て減衰で戻る
+					// Punch: sin波で「0→ピーク→0」 × 減衰
+					var punch = Mathf.Sin(t * Mathf.PI) * (1f - t);
 					if (_settings.PunchPositionEnabled)
-						posOffset += _settings.PunchPositionIntensity * decay;
+						posOffset += _settings.PunchPositionIntensity * punch;
 					if (_settings.PunchRotationEnabled)
-						rotOffset += _settings.PunchRotationIntensity * decay;
+						rotOffset += _settings.PunchRotationIntensity * punch;
 					if (_settings.PunchScaleEnabled)
-						scaleOffset += _settings.PunchScaleIntensity * decay;
+						scaleOffset += _settings.PunchScaleIntensity * punch;
 
 					SetPosition(originalPosition + posOffset);
 					transform.localEulerAngles = originalRotation + rotOffset;
