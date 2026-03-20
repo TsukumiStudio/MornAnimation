@@ -9,7 +9,6 @@ namespace MornLib
 	public sealed class MornAnimationFxSettings : ScriptableObject
 	{
 		[SerializeField] private float _duration = 0.3f;
-		[SerializeField] private MornEaseType _easeType = MornEaseType.EaseOutQuart;
 		[SerializeField, Tooltip("1秒あたりの振動回数")]
 		private float _vibration = 20f;
 
@@ -38,7 +37,6 @@ namespace MornLib
 		[SerializeField, ShowIf(nameof(_punchScaleEnabled))] private Vector3 _punchScaleIntensity = new(0.2f, 0.2f, 0f);
 
 		public float Duration => _duration;
-		public MornEaseType EaseType => _easeType;
 		public float Vibration => _vibration;
 		public bool ShakePositionEnabled => _shakePositionEnabled;
 		public Vector3 ShakePositionIntensity => _shakePositionIntensity;

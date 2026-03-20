@@ -52,7 +52,6 @@ namespace MornLib
 			ct = _cts.Token;
 
 			var duration = _settings.Duration;
-			var easeType = _settings.EaseType;
 			var vibration = _settings.Vibration;
 
 			// 元の値を保存
@@ -75,7 +74,7 @@ namespace MornLib
 					if (this == null) return;
 					elapsed += MornAnimationUtil.GetDeltaTime();
 					var t = Mathf.Clamp01(elapsed / duration);
-					var decay = (1f - t).Ease(easeType);
+					var decay = 1f - t;
 
 					// vibrationタイミングで新しいランダム値を生成
 					if (elapsed >= nextVibrationTime)
