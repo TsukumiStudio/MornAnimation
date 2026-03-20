@@ -44,6 +44,7 @@ namespace MornLib
 			PlayAsync().Forget();
 		}
 
+		/// <summary>エフェクト再生。内部でdestroyTokenとリンクするため、呼び出し側でdestroyTokenを渡す必要はない。</summary>
 		public async UniTask PlayAsync(CancellationToken ct = default)
 		{
 			if (_settings == null) return;

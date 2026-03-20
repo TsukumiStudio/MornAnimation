@@ -11,7 +11,9 @@ namespace MornLib
 		/// <summary>自動取得(CollectChildAnimations)の対象外にするか。</summary>
 		public bool ExcludeFromAutoCollect => _excludeFromAutoCollect;
 
+		/// <summary>表示アニメーション。内部でdestroyTokenとリンクするため、呼び出し側でdestroyTokenを渡す必要はない。</summary>
 		public abstract UniTask ShowAsync(CancellationToken ct = default);
+		/// <summary>非表示アニメーション。内部でdestroyTokenとリンクするため、呼び出し側でdestroyTokenを渡す必要はない。</summary>
 		public abstract UniTask HideAsync(CancellationToken ct = default);
 		public abstract void DebugInitialize();
 
