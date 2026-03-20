@@ -111,13 +111,13 @@ namespace MornLib
             _cts?.Cancel();
             _cts = CancellationTokenSource.CreateLinkedTokenSource(ct, destroyCancellationToken);
             await PlayAsync(_settings, true, _cts.Token);
-            if (IsCanvasGroup && _canvasGroup != null) _canvasGroup.SetActive(true);
+            SetCanvasGroupActive(true);
         }
 
         public override UniTask HideAsync(CancellationToken ct = default)
         {
             if (_settings == null) return UniTask.CompletedTask;
-            if (IsCanvasGroup && _canvasGroup != null) _canvasGroup.SetActive(false);
+            SetCanvasGroupActive(false);
             _cts?.Cancel();
             _cts = CancellationTokenSource.CreateLinkedTokenSource(ct, destroyCancellationToken);
             return PlayAsync(_settings, false, _cts.Token);
@@ -301,6 +301,13 @@ namespace MornLib
             }
         }
 
+        private void SetCanvasGroupActive(bool active)
+        {
+            if (!IsCanvasGroup || _canvasGroup == null) return;
+            _canvasGroup.interactable = active;
+            _canvasGroup.blocksRaycasts = active;
+        }
+
         private void ApplyImmediate(MornAnimationSettings s, bool show)
         {
             if (s.FadeEnabled)
@@ -319,10 +326,7 @@ namespace MornLib
             {
                 transform.localEulerAngles = show ? _showRotation : _showRotation + s.HideRotateOffset;
             }
-            if (IsCanvasGroup && _canvasGroup != null)
-            {
-                _canvasGroup.SetActive(show);
-            }
+            SetCanvasGroupActive(show);
         }
     }
 }
