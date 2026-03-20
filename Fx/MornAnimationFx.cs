@@ -89,12 +89,29 @@ namespace MornLib
 						nextVibrationTime = vibrationInterval > 0f ? elapsed + vibrationInterval : float.MaxValue;
 					}
 
+					// Shake: ランダム揺れ × 減衰
+					var posOffset = Vector3.zero;
+					var rotOffset = Vector3.zero;
+					var scaleOffset = Vector3.zero;
+
 					if (_settings.ShakePositionEnabled)
-						SetPosition(originalPosition + currentShakePos * decay);
+						posOffset += currentShakePos * decay;
 					if (_settings.ShakeRotationEnabled)
-						transform.localEulerAngles = originalRotation + currentShakeRot * decay;
+						rotOffset += currentShakeRot * decay;
 					if (_settings.ShakeScaleEnabled)
-						transform.localScale = originalScale + currentShakeScale * decay;
+						scaleOffset += currentShakeScale * decay;
+
+					// Punch: intensity方向にガッと出て減衰で戻る
+					if (_settings.PunchPositionEnabled)
+						posOffset += _settings.PunchPositionIntensity * decay;
+					if (_settings.PunchRotationEnabled)
+						rotOffset += _settings.PunchRotationIntensity * decay;
+					if (_settings.PunchScaleEnabled)
+						scaleOffset += _settings.PunchScaleIntensity * decay;
+
+					SetPosition(originalPosition + posOffset);
+					transform.localEulerAngles = originalRotation + rotOffset;
+					transform.localScale = originalScale + scaleOffset;
 
 					await MornAnimationUtil.WaitNextFrame(ct);
 				}
