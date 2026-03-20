@@ -29,6 +29,7 @@ namespace MornLib
         [SerializeField] private MornAnimationSettings _settings;
         [SerializeField] private MoveTarget _moveTarget;
         [SerializeField, ShowIf(nameof(IsMoveRectTransform))] private RectTransform _rectTransform;
+        [SerializeField, ShowIf(nameof(IsMoveRectTransform))] private bool _autoPivotCenter = true;
         [SerializeField] private FadeTarget _fadeTarget;
         [SerializeField, ShowIf(nameof(IsCanvasGroup))] private CanvasGroup _canvasGroup;
         [SerializeField, ShowIf(nameof(IsImage))] private Image _image;
@@ -49,6 +50,10 @@ namespace MornLib
 
         private void Awake()
         {
+            if (_autoPivotCenter && _moveTarget == MoveTarget.RectTransform && _rectTransform != null)
+            {
+                _rectTransform.pivot = new Vector2(0.5f, 0.5f);
+            }
             if (_settings != null) ApplyImmediate(_settings, false);
         }
 
