@@ -303,9 +303,8 @@ namespace MornLib
 
         private void SetCanvasGroupActive(bool active)
         {
-            if (!IsCanvasGroup || _canvasGroup == null) return;
-            _canvasGroup.interactable = active;
-            _canvasGroup.blocksRaycasts = active;
+            if (!IsCanvasGroup) return;
+            MornAnimationUtil.SetCanvasGroupActive(_canvasGroup, active);
         }
 
         private void ApplyImmediate(MornAnimationSettings s, bool show)

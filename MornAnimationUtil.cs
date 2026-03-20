@@ -121,6 +121,13 @@ namespace MornLib
 #endif
 		}
 
+		public static void SetCanvasGroupActive(CanvasGroup canvasGroup, bool active)
+		{
+			if (canvasGroup == null) return;
+			canvasGroup.interactable = active;
+			canvasGroup.blocksRaycasts = active;
+		}
+
 		/// <summary>
 		/// 子孫のMornAnimationBaseを収集する。
 		/// 自身と、子孫のSequenceが管轄するtargetsは除外する。
