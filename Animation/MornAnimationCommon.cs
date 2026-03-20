@@ -105,17 +105,19 @@ namespace MornLib
             MornAnimationUtil.SetDirty(this);
         }
 
-        public override UniTask ShowAsync(CancellationToken ct = default)
+        public override async UniTask ShowAsync(CancellationToken ct = default)
         {
-            if (_settings == null) return UniTask.CompletedTask;
+            if (_settings == null) return;
             _cts?.Cancel();
             _cts = CancellationTokenSource.CreateLinkedTokenSource(ct, destroyCancellationToken);
-            return PlayAsync(_settings, true, _cts.Token);
+            await PlayAsync(_settings, true, _cts.Token);
+            if (IsCanvasGroup && _canvasGroup != null) _canvasGroup.SetActive(true);
         }
 
         public override UniTask HideAsync(CancellationToken ct = default)
         {
             if (_settings == null) return UniTask.CompletedTask;
+            if (IsCanvasGroup && _canvasGroup != null) _canvasGroup.SetActive(false);
             _cts?.Cancel();
             _cts = CancellationTokenSource.CreateLinkedTokenSource(ct, destroyCancellationToken);
             return PlayAsync(_settings, false, _cts.Token);
@@ -316,6 +318,10 @@ namespace MornLib
             if (s.RotateEnabled)
             {
                 transform.localEulerAngles = show ? _showRotation : _showRotation + s.HideRotateOffset;
+            }
+            if (IsCanvasGroup && _canvasGroup != null)
+            {
+                _canvasGroup.SetActive(show);
             }
         }
     }
