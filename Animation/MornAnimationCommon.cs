@@ -56,10 +56,11 @@ namespace MornLib
                 var newPivot = new Vector2(0.5f, 0.5f);
                 var delta = newPivot - oldPivot;
                 var size = _rectTransform.rect.size;
-                var offset = new Vector3(delta.x * size.x, delta.y * size.y, 0f);
+                var offset = new Vector2(delta.x * size.x, delta.y * size.y);
 
                 _rectTransform.pivot = newPivot;
-                _showPosition += offset;
+                _rectTransform.anchoredPosition += offset;
+                _showPosition += (Vector3)offset;
             }
             if (_settings != null) ApplyImmediate(_settings, false);
         }
