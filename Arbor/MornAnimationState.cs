@@ -11,7 +11,7 @@ namespace MornLib
 		[SerializeField] private List<MornAnimationEntry> _targets;
 		[SerializeField] private StateLink _onComplete;
 		[SerializeField] private bool _isExecuteAsIsolated;
-		[SerializeField] private float _interval;
+		[SerializeField] private float _interval = 0.03f;
 		[SerializeField] private float _delay;
 		[SerializeField] private bool _isWaitEach;
 
