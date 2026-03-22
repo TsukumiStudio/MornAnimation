@@ -111,6 +111,7 @@ namespace MornLib
         [Button("現在の状態をShowStateに設定")]
         public void CaptureCurrentAsShowState()
         {
+            MornAnimationUtil.RecordUndo(this, "CaptureCurrentAsShowState");
             _showPosition = GetPosition();
             _showScale = transform.localScale;
             _showRotation = transform.localEulerAngles;

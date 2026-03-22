@@ -64,6 +64,7 @@ namespace MornLib
 		[Button("子孫オブジェクトから自動取得")]
 		public void CollectFromChildren()
 		{
+			MornAnimationUtil.RecordUndo(this, "CollectFromChildren");
 			_targets = MornAnimationUtil.CollectChildAnimations(this);
 			MornAnimationUtil.SetDirty(this);
 		}

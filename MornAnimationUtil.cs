@@ -109,6 +109,19 @@ namespace MornLib
 		}
 
 		/// <summary>
+		/// Editor上でUndo記録する。
+		/// </summary>
+		public static void RecordUndo(UnityEngine.Object target, string name)
+		{
+#if UNITY_EDITOR
+			if (!Application.isPlaying)
+			{
+				UnityEditor.Undo.RecordObject(target, name);
+			}
+#endif
+		}
+
+		/// <summary>
 		/// Editor上でオブジェクトをDirtyとしてマーク（Prefab変更の保存用）
 		/// </summary>
 		public static void SetDirty(UnityEngine.Object target)
