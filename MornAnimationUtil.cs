@@ -155,7 +155,7 @@ namespace MornLib
 			// 子孫のSequenceが管轄するtargetsを除外対象に
 			foreach (var seq in root.GetComponentsInChildren<MornAnimationSequence>())
 			{
-				if (seq == root as object) continue;
+				if ((object)seq == (object)root) continue;
 				var seqTargets = seq.GetTargetsForExclusion();
 				if (seqTargets != null)
 				{
