@@ -10,8 +10,7 @@ namespace MornLib
     [CreateAssetMenu(fileName = nameof(MornAnimationSettings), menuName = "Morn/Animation/" + nameof(MornAnimationSettings))]
     public sealed class MornAnimationSettings : ScriptableObject
     {
-        [SerializeField, Tooltip("未設定(null)の場合はMornAnimationGlobalのTimeSettingsを使用")]
-        [Label("TimeSettings (Override)")]
+        [SerializeField, Label("TimeSettings (Override)")]
         private MornAnimationTimeSettings _timeSettings;
 
         [Header("Fade")]
@@ -25,11 +24,15 @@ namespace MornLib
 
         [Header("Scale")]
         [SerializeField] private bool _scaleEnabled;
-        [SerializeField, ShowIf(nameof(_scaleEnabled))] private Vector3 _hideScaleOffset;
+        [SerializeField, ShowIf(nameof(_scaleEnabled))] private Vector3 _hideScaleMultiply = Vector3.one;
+        [SerializeField, ShowIf(nameof(_scaleEnabled))] private bool _spawnScaleMultiplyEnabled;
+        [SerializeField, ShowIf(nameof(_spawnScaleMultiplyEnabled))] private Vector3 _spawnScaleMultiply = Vector3.one;
 
         [Header("Rotate")]
         [SerializeField] private bool _rotateEnabled;
         [SerializeField, ShowIf(nameof(_rotateEnabled))] private Vector3 _hideRotateOffset;
+        [SerializeField, ShowIf(nameof(_rotateEnabled))] private bool _spawnRotateOffsetEnabled;
+        [SerializeField, ShowIf(nameof(_spawnRotateOffsetEnabled))] private Vector3 _spawnRotateOffset;
 
         public MornAnimationTimeSettings TimeSettings => _timeSettings != null ? _timeSettings : MornAnimationGlobal.I.TimeSettings;
         public bool FadeEnabled => _fadeEnabled;
@@ -38,8 +41,12 @@ namespace MornLib
         public bool SpawnPositionOffsetEnabled => _spawnPositionOffsetEnabled;
         public Vector3 SpawnPositionOffset => _spawnPositionOffset;
         public bool ScaleEnabled => _scaleEnabled;
-        public Vector3 HideScaleOffset => _hideScaleOffset;
+        public Vector3 HideScaleMultiply => _hideScaleMultiply;
+        public bool SpawnScaleMultiplyEnabled => _spawnScaleMultiplyEnabled;
+        public Vector3 SpawnScaleMultiply => _spawnScaleMultiply;
         public bool RotateEnabled => _rotateEnabled;
         public Vector3 HideRotateOffset => _hideRotateOffset;
+        public bool SpawnRotateOffsetEnabled => _spawnRotateOffsetEnabled;
+        public Vector3 SpawnRotateOffset => _spawnRotateOffset;
     }
 }
