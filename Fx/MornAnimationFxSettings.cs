@@ -36,6 +36,24 @@ namespace MornLib
 		[SerializeField, ShowIf(nameof(_fadeEnabled))] private MornAnimationRateModule _fadeRate = new();
 		[SerializeField, ShowIf(nameof(_fadeEnabled))] private CurveApplyMode _fadeMode = CurveApplyMode.Multiply;
 
+		[Header("Random Position")]
+		[SerializeField] private bool _randomPositionEnabled;
+		[SerializeField, ShowIf(nameof(_randomPositionEnabled))] private Vector3 _randomPositionMin;
+		[SerializeField, ShowIf(nameof(_randomPositionEnabled))] private Vector3 _randomPositionMax;
+		[SerializeField, ShowIf(nameof(_randomPositionEnabled))] private bool _randomPositionRelative = true;
+
+		[Header("Random Rotation")]
+		[SerializeField] private bool _randomRotationEnabled;
+		[SerializeField, ShowIf(nameof(_randomRotationEnabled))] private Vector3 _randomRotationMin;
+		[SerializeField, ShowIf(nameof(_randomRotationEnabled))] private Vector3 _randomRotationMax;
+		[SerializeField, ShowIf(nameof(_randomRotationEnabled))] private bool _randomRotationRelative = true;
+
+		[Header("Random Scale")]
+		[SerializeField] private bool _randomScaleEnabled;
+		[SerializeField, ShowIf(nameof(_randomScaleEnabled))] private Vector3 _randomScaleMin = Vector3.one;
+		[SerializeField, ShowIf(nameof(_randomScaleEnabled))] private Vector3 _randomScaleMax = Vector3.one;
+		[SerializeField, ShowIf(nameof(_randomScaleEnabled))] private CurveApplyMode _randomScaleMode = CurveApplyMode.Multiply;
+
 		[Header("Punch")]
 		[SerializeField] private bool _punchPositionEnabled;
 		[SerializeField, ShowIf(nameof(_punchPositionEnabled))] private Vector3 _punchPositionIntensity = new(0f, 30f, 0f);
@@ -58,6 +76,18 @@ namespace MornLib
 		public bool FadeEnabled => _fadeEnabled;
 		public MornAnimationRateModule FadeRate => _fadeRate;
 		public CurveApplyMode FadeMode => _fadeMode;
+		public bool RandomPositionEnabled => _randomPositionEnabled;
+		public Vector3 RandomPositionMin => _randomPositionMin;
+		public Vector3 RandomPositionMax => _randomPositionMax;
+		public bool RandomPositionRelative => _randomPositionRelative;
+		public bool RandomRotationEnabled => _randomRotationEnabled;
+		public Vector3 RandomRotationMin => _randomRotationMin;
+		public Vector3 RandomRotationMax => _randomRotationMax;
+		public bool RandomRotationRelative => _randomRotationRelative;
+		public bool RandomScaleEnabled => _randomScaleEnabled;
+		public Vector3 RandomScaleMin => _randomScaleMin;
+		public Vector3 RandomScaleMax => _randomScaleMax;
+		public CurveApplyMode RandomScaleMode => _randomScaleMode;
 		public bool PunchPositionEnabled => _punchPositionEnabled;
 		public Vector3 PunchPositionIntensity => _punchPositionIntensity;
 		public bool PunchRotationEnabled => _punchRotationEnabled;

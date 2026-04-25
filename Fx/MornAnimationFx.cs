@@ -75,6 +75,29 @@ namespace MornLib
 			var originalScale = _initialScale;
 			var originalAlpha = _initialAlpha;
 
+			// Play 開始時の Random offset を初期値へ適用
+			if (_settings.RandomPositionEnabled)
+			{
+				var rand = SampleRange(_settings.RandomPositionMin, _settings.RandomPositionMax);
+				originalPosition = _settings.RandomPositionRelative ? originalPosition + rand : rand;
+			}
+			if (_settings.RandomRotationEnabled)
+			{
+				var rand = SampleRange(_settings.RandomRotationMin, _settings.RandomRotationMax);
+				originalRotation = _settings.RandomRotationRelative ? originalRotation + rand : rand;
+			}
+			if (_settings.RandomScaleEnabled)
+			{
+				var rand = SampleRange(_settings.RandomScaleMin, _settings.RandomScaleMax);
+				originalScale = _settings.RandomScaleMode switch
+				{
+					MornAnimationFxSettings.CurveApplyMode.Multiply => Vector3.Scale(originalScale, rand),
+					MornAnimationFxSettings.CurveApplyMode.Add => originalScale + rand,
+					MornAnimationFxSettings.CurveApplyMode.Override => rand,
+					_ => originalScale,
+				};
+			}
+
 			var vibrationInterval = vibration > 0f ? 1f / vibration : 0f;
 			var elapsed = 0f;
 			var nextVibrationTime = 0f;
@@ -196,6 +219,15 @@ namespace MornLib
 				Random.Range(-intensity.x, intensity.x),
 				Random.Range(-intensity.y, intensity.y),
 				Random.Range(-intensity.z, intensity.z)
+			);
+		}
+
+		private static Vector3 SampleRange(Vector3 min, Vector3 max)
+		{
+			return new Vector3(
+				Random.Range(min.x, max.x),
+				Random.Range(min.y, max.y),
+				Random.Range(min.z, max.z)
 			);
 		}
 
