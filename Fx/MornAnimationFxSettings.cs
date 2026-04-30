@@ -5,7 +5,7 @@ namespace MornLib
 	/// <summary>
 	/// エフェクトアニメーションの定義。Shake系・Punch系のパラメータを持つ。
 	/// </summary>
-	[CreateAssetMenu(fileName = nameof(MornAnimationFxSettings), menuName = "Morn/Animation/" + nameof(MornAnimationFxSettings))]
+	[CreateAssetMenu(fileName = nameof(MornAnimationFxSettings), menuName = "MornAnimation/" + nameof(MornAnimationFxSettings))]
 	public sealed class MornAnimationFxSettings : ScriptableObject
 	{
 		public enum CurveApplyMode
