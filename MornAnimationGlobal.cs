@@ -4,7 +4,7 @@ using UnityEngine.Audio;
 
 namespace MornLib
 {
-	[CreateAssetMenu(fileName = nameof(MornAnimationGlobal), menuName = "MornAnimation/" + nameof(MornAnimationGlobal), order = 0)]
+	[CreateAssetMenu(fileName = nameof(MornAnimationGlobal), menuName = "Morn/Animation/" + nameof(MornAnimationGlobal))]
 	internal sealed class MornAnimationGlobal : MornGlobalBase<MornAnimationGlobal>
 	{
 		protected override string ModuleName => "MornAnimation";
