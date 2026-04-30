@@ -7,7 +7,7 @@ namespace MornLib
     /// MornAnimationCommonのリストに積んで使う。
     /// Show時の目標値はCommon側が持ち、こちらはHide時のオフセットとタイミングを定義する。
     /// </summary>
-    [CreateAssetMenu(fileName = nameof(MornAnimationSettings), menuName = "MornAnimation/" + nameof(MornAnimationSettings))]
+    [CreateAssetMenu(fileName = nameof(MornAnimationSettings), menuName = "MornAnimation/" + nameof(MornAnimationSettings), order = 0)]
     public sealed class MornAnimationSettings : ScriptableObject
     {
         [SerializeField, Label("TimeSettings (Override)")]
