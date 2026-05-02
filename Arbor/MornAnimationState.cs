@@ -1,14 +1,25 @@
-#if USE_ARBOR
+#if USE_ARBOR || USE_MORNSTATE
 using System.Collections.Generic;
+using System;
+#if USE_MORNSTATE
+using MornLib;
+using StateLink = MornLib.Connection;
+#else
 using Arbor;
+#endif
 using Cysharp.Threading.Tasks;
 using UnityEngine;
 
 namespace MornLib
 {
+	[Serializable]
+#if USE_MORNSTATE
+	internal sealed class MornAnimationState : MornStateBehaviour
+#else
 	internal sealed class MornAnimationState : StateBehaviour
+#endif
 	{
-		[SerializeField] private List<MornAnimationEntry> _targets;
+		[SerializeField, NoLabel] private List<MornAnimationEntry> _targets;
 		[SerializeField] private StateLink _onComplete;
 		[SerializeField] private bool _isExecuteAsIsolated;
 		[SerializeField] private float _interval = 0.03f;
@@ -64,14 +75,21 @@ namespace MornLib
 
 		private void CollectFromChildren(bool toShow)
 		{
-			MornAnimationUtil.RecordUndo(this, "CollectFromChildren");
-			var anims = MornAnimationUtil.CollectChildAnimations(this);
+#if USE_MORNSTATE
+			var component = (Component)Owner;
+			var unityObject = (UnityEngine.Object)Owner;
+#else
+			var component = (Component)this;
+			var unityObject = (UnityEngine.Object)this;
+#endif
+			MornAnimationUtil.RecordUndo(unityObject, "CollectFromChildren");
+			var anims = MornAnimationUtil.CollectChildAnimations(component);
 			_targets = new List<MornAnimationEntry>();
 			foreach (var anim in anims)
 			{
 				_targets.Add(MornAnimationEntry.Create(anim, toShow));
 			}
-			MornAnimationUtil.SetDirty(this);
+			MornAnimationUtil.SetDirty(unityObject);
 		}
 	}
 }
