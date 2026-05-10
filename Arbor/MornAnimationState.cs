@@ -1,7 +1,6 @@
-#if USE_ARBOR || USE_MORNSTATE
 using System.Collections.Generic;
 using System;
-#if USE_MORNSTATE
+#if !USE_ARBOR
 using MornLib;
 #else
 using Arbor;
@@ -12,7 +11,7 @@ using UnityEngine;
 namespace MornLib
 {
 	[Serializable]
-#if USE_MORNSTATE
+#if !USE_ARBOR
 	internal sealed class MornAnimationState : MornStateBehaviour
 #else
 	internal sealed class MornAnimationState : StateBehaviour
@@ -74,7 +73,7 @@ namespace MornLib
 
 		private void CollectFromChildren(bool toShow)
 		{
-#if USE_MORNSTATE
+#if !USE_ARBOR
 			var component = (Component)Owner;
 			var unityObject = (UnityEngine.Object)Owner;
 #else
@@ -92,4 +91,3 @@ namespace MornLib
 		}
 	}
 }
-#endif
